@@ -6,12 +6,15 @@
 import zipfile
 import os
 
-def backupToZip(floder):
 
+def backupToZip(folder):
+
+    #change absloute path
     folder = os.path.abspath(folder)
 
     number = 1
-    
+
+    #if zipFileName not exists, then break and create one.
     while True:
         zipFileName = os.path.basename(folder) + '_' + str(number) + '.zip'
         if not os.path.exists(zipFileName):
@@ -20,11 +23,30 @@ def backupToZip(floder):
             number = number + 1
 
 
-    #TODO: Create Zip file
+    #Create Zip file
+    print('Creating %s...' % (zipFileName))
+    backupZip = zipfile.ZipFile(zipFileName, 'w')            
 
-    #TODO: Walk entire folder
 
+
+    #Walk entire folder
+    for foldername, subfloders, filenames in os.walk(folder):
+        print('adding files in %s...' % (foldername))
+        #Add current folder to zip
+        backupZip.write(foldername)
+
+        for filename in filenames:
+            newBase = os.path.basename(folder) + '_'
+
+            if filename.startswith(newBase) and filename.endswith('.zip'):
+                continue
+            
+            backupZip.write(os.path.join(foldername, filename))
+            
+    backupZip.close()
+    
     print('Done.')
 
 
-            
+
+backupToZip('C:\\Users\\vend_dt076\\Desktop\\CVD_all')
